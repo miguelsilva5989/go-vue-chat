@@ -1,18 +1,35 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <Header />
+
+    <v-container class="grey ma-0" fluid>
+      <v-row>
+        <v-col cols="12">
+          <v-row class="ma-0" align="center" justify="center">
+            <v-col cols="6" md="5">
+              <ChatArea user_id="1" />
+            </v-col>
+
+            <v-col cols="6" md="5">
+              <ChatArea user_id="2" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Header from "@/components/Header.vue";
+import ChatArea from "@/components/ChatArea.vue";
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-    HelloWorld
+    Header,
+    ChatArea
   }
-}
+};
 </script>
