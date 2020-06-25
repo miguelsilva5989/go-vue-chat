@@ -1,11 +1,15 @@
 <template>
-  <div>
-    <v-responsive max-width="400" class="mx-auto mb-4">
-      <v-text-field v-model="benched" type="number" label="Total Benched" min="0" max="10"></v-text-field>
-    </v-responsive>
+  <div class="chat">
+    <v-btn class="mb-3" small color="primary">Connect</v-btn>
 
-    <v-card elevation="16" max-width="400" class="mx-auto">
-      <v-virtual-scroll :bench="benched" :items="items" height="300" item-height="64">
+    <v-card elevation="16" max-width="600" class="mx-auto">
+      <v-virtual-scroll
+        :bench="benched"
+        :items="items"
+        max-height="800"
+        height="500"
+        item-height="64"
+      >
         <template v-slot="{ item }">
           <v-list-item :key="item">
             <v-list-item-action>
@@ -13,14 +17,11 @@
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>
-                User Database Record
-                <strong>ID {{ }}</strong>
-              </v-list-item-title>
+              <v-list-item-title>User Database Record</v-list-item-title>
             </v-list-item-content>
 
             <v-list-item-action>
-              <v-icon small>mdi-open-in-new</v-icon>
+              <v-icon small>mdi-trash-can</v-icon>
             </v-list-item-action>
           </v-list-item>
 
@@ -34,10 +35,11 @@
 <script>
 export default {
   name: "ChatArea",
-
+  props: {
+    user_id: Number
+  },
   data: () => ({
-    user_id: null,
-    benched: 0
+    benched: 1 // The number of items outside the user view that are rendered (even if they are not viewable); to help prevent empty white space when scrolling fast.
   }),
   computed: {
     items() {
@@ -49,3 +51,29 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.chat {
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: #3c3c3c;
+  border-left: 1px solid #202020;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #767676;
+  border: solid 3px #3c3c3c;
+  border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: white;
+}
+</style>

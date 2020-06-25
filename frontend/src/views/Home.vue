@@ -2,16 +2,16 @@
   <div>
     <Header />
 
-    <v-container class="grey ma-0" fluid>
+    <v-container class="ma-0" fluid>
       <v-row>
         <v-col cols="12">
           <v-row class="ma-0" align="center" justify="center">
             <v-col cols="6" md="5">
-              <ChatArea user_id="1" />
+              <ChatArea :user_id="1" />
             </v-col>
 
             <v-col cols="6" md="5">
-              <ChatArea user_id="2" />
+              <ChatArea :user_id="2" />
             </v-col>
           </v-row>
         </v-col>
