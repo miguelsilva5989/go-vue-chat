@@ -1,9 +1,15 @@
 <template>
   <div class="chat">
-    <v-btn class="mb-3" small color="primary" @click="connectWs" :disabled="connected">Connect</v-btn>
+    <v-btn class="mb-3" small color="primary" @click="connectWs" v-if="!connected">Connect</v-btn>
+    <v-btn class="mb-3" small color="red" @click="disconnectWs" v-if="connected">Disconnect</v-btn>
 
     <v-card elevation="16" class="mx-auto">
-      <v-virtual-scroll :bench="benched" :items="items" height="510" item-height="64">
+      <v-virtual-scroll
+        :bench="benched"
+        :items="connected ? getMessages : []"
+        height="510"
+        item-height="64"
+      >
         <template v-slot="{ item }">
           <v-list-item :key="item">
             <v-list-item-action>
@@ -13,7 +19,7 @@
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>message...</v-list-item-title>
+              <v-list-item-title>{{ item }}</v-list-item-title>
             </v-list-item-content>
 
             <v-list-item-action>
@@ -26,12 +32,13 @@
       </v-virtual-scroll>
 
       <v-text-field
+        :disabled="!connected"
         v-model="messageInput"
         filled
         @keydown.enter="sendMsg"
         :counter="maxLength"
-        placeholder="Write a message..."
-        :rules="[messageRules.required, messageRules.max]"
+        :placeholder="connected ? 'Write a message...' : 'You need to connect before sending a message'"
+        :rules="[messageRules.max]"
       ></v-text-field>
     </v-card>
   </div>
@@ -39,6 +46,7 @@
 
 <script>
 import ws from "../api";
+import { mapGetters } from "vuex";
 
 export default {
   name: "ChatArea",
@@ -51,10 +59,17 @@ export default {
     maxLength: 40,
     messageInput: "",
     messageRules: {
-      required: value => !!value || "Required.",
       max: v => v.length <= 40 || "Max 40 characters"
     }
   }),
+  mounted() {
+    // ws.message(msg => {
+    //   console.log("New Message");
+    //   this.messages.push(msg);
+    //   console.log(this.messages);
+    // });
+    this.$options.sockets.onmessage = data => console.log(data);
+  },
   methods: {
     connectWs() {
       ws.connect(msg => {
@@ -62,20 +77,25 @@ export default {
       });
       this.connected = !this.connected;
     },
+    disconnectWs() {
+      ws.disconnect(msg => {
+        console.log(msg);
+      });
+      this.connected = !this.connected;
+    },
     sendMsg() {
-      if (this.messageInput.length <= this.maxLength) {
-        console.log(this.messageInput);
+      if (
+        this.messageInput.length <= this.maxLength &&
+        this.messageInput.length > 0
+      ) {
+        this.$store.dispatch("sendMessage", this.messageInput);
+        // this.messages.push(this.messageInput);
         this.messageInput = "";
       }
     }
   },
   computed: {
-    items() {
-      return Array.from({ length: this.length }, (k, v) => v + 1);
-    },
-    length() {
-      return 30;
-    }
+    ...mapGetters(["getMessages"])
   }
 };
 </script>
