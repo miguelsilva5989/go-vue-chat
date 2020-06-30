@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar dense>
-      <v-toolbar-title>Go Vuejs Chat App</v-toolbar-title>
+      <v-toolbar-title>Vuejs Chat App using Websockets with Go</v-toolbar-title>
 
       <v-spacer></v-spacer>
       <v-icon>mdi-wechat</v-icon>
@@ -13,8 +13,6 @@
 export default {
   name: "Header",
 
-  data: () => ({
-    unread_messages: false
-  })
+  data: () => ({})
 };
 </script>
