@@ -13,16 +13,13 @@
     ></v-text-field>
 
     <v-card elevation="16" class="mx-auto">
-      <v-virtual-scroll
-        :bench="benched"
-        :items="connected ? getMessages : []"
-        height="510"
-        item-height="32"
-      >
-        <template v-slot="{ item }">
-          <v-list-item inactive dense two-line :key="item">{{ username }} - {{ item }}</v-list-item>
-        </template>
-      </v-virtual-scroll>
+      <v-card-text>
+        <v-list :id="'messages' + chatId">
+          <template v-for="message in connected ? getMessages : []">
+            <v-subheader :key="message.id">{{ message.data }}</v-subheader>
+          </template>
+        </v-list>
+      </v-card-text>
     </v-card>
 
     <v-text-field
@@ -43,6 +40,9 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "ChatArea",
+  props: {
+    chatId: Number
+  },
   data: () => ({
     benched: 1, // The number of items outside the user view that are rendered (even if they are not viewable); to help prevent empty white space when scrolling fast
     connected: false,
@@ -60,7 +60,12 @@ export default {
     //   this.messages.push(msg);
     //   console.log(this.messages);
     // });
-    this.$options.sockets.onmessage = data => console.log(data);
+    this.$options.sockets.onmessage = data => {
+      console.log(data);
+      var messageDivId = "messages" + this.chatId;
+      var messagesDiv = document.getElementById(messageDivId);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    };
   },
   methods: {
     connectWs() {
@@ -94,6 +99,15 @@ export default {
 <style scoped>
 .chat {
   height: 100%;
+}
+
+#messages1 {
+  height: 550px;
+  overflow: auto;
+}
+#messages2 {
+  height: 550px;
+  overflow: auto;
 }
 
 ::-webkit-scrollbar {

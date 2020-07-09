@@ -10,6 +10,7 @@ export default new Vuex.Store({
       messages: [],
       message: '',
       reconnectError: false,
+      messageId: 0,
     },
   },
   getters: {
@@ -42,8 +43,9 @@ export default new Vuex.Store({
     ADD_MESSAGE(state, message) {
       console.log(message);
       console.log(state.socket.messages);
-      state.socket.messages.push(message);
-    },
+      state.socket.messages.push({"id": state.socket.messageId, "data": message});
+      state.socket.messageId++
+    }
   },
   actions: {
     sendMessage({ commit }, message) {
