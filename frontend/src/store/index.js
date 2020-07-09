@@ -8,7 +8,6 @@ export default new Vuex.Store({
     socket: {
       isConnected: false,
       messages: [],
-      message: '',
       reconnectError: false,
       messageId: 0,
     },
@@ -40,17 +39,18 @@ export default new Vuex.Store({
     SOCKET_RECONNECT_ERROR(state) {
       state.socket.reconnectError = true;
     },
-    ADD_MESSAGE(state, message) {
-      console.log(message);
+    ADD_MESSAGE(state, payload) {
+      console.log(payload);
       console.log(state.socket.messages);
-      state.socket.messages.push({"id": state.socket.messageId, "data": message});
       state.socket.messageId++
-    }
+      state.socket.messages.push({ "id": state.socket.messageId, "data": payload.message, "username": payload.username });
+    },
   },
   actions: {
-    sendMessage({ commit }, message) {
-      Vue.prototype.$socket.send(message);
-      commit('ADD_MESSAGE', message);
+    sendMessage({ commit }, payload) {
+      Vue.prototype.$socket.send(payload.message);
+      commit('ADD_MESSAGE', payload);
     },
+
   },
 });

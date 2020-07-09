@@ -15,8 +15,10 @@
     <v-card elevation="16" class="mx-auto">
       <v-card-text>
         <v-list :id="'messages' + chatId">
-          <template v-for="message in connected ? getMessages : []">
-            <v-subheader :key="message.id">{{ message.data }}</v-subheader>
+          <template
+            v-for="message in connected ? getMessages : [{id: 0, data: 'You need to connect before checking messages'}]"
+          >
+            <v-subheader :key="message.id">user: {{ message.username }} - {{ message.data }}</v-subheader>
           </template>
         </v-list>
       </v-card-text>
@@ -55,11 +57,6 @@ export default {
     username: ""
   }),
   mounted() {
-    // ws.message(msg => {
-    //   console.log("New Message");
-    //   this.messages.push(msg);
-    //   console.log(this.messages);
-    // });
     this.$options.sockets.onmessage = data => {
       console.log(data);
       var messageDivId = "messages" + this.chatId;
@@ -85,7 +82,8 @@ export default {
         this.messageInput.length <= this.maxLength &&
         this.messageInput.length > 0
       ) {
-        this.$store.dispatch("sendMessage", this.messageInput);
+        var payload = { message: this.messageInput, username: this.username };
+        this.$store.dispatch("sendMessage", payload);
         this.messageInput = "";
       }
     }
