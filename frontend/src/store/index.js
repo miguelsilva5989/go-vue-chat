@@ -40,17 +40,20 @@ export default new Vuex.Store({
       state.socket.reconnectError = true;
     },
     ADD_MESSAGE(state, payload) {
-      console.log(payload);
-      console.log(state.socket.messages);
-      state.socket.messageId++
-      state.socket.messages.push({ "id": state.socket.messageId, "data": payload.message, "username": payload.username });
+      // console.log(payload);
+      // console.log(state.socket.messages);
+      state.socket.messageId++;
+      state.socket.messages.push({
+        id: state.socket.messageId,
+        data: payload.message,
+        username: payload.username,
+      });
     },
   },
   actions: {
     sendMessage({ commit }, payload) {
-      Vue.prototype.$socket.send(payload.message);
+      Vue.prototype.$socket.send(payload);
       commit('ADD_MESSAGE', payload);
     },
-
   },
 });

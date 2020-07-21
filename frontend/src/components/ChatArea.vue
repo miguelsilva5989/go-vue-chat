@@ -1,6 +1,13 @@
 <template>
   <div class="chat">
-    <v-btn class="mb-3" small color="primary" @click="connectWs" v-if="!connected">Connect</v-btn>
+    <v-btn
+      class="mb-3"
+      small
+      color="primary"
+      @click="connectWs"
+      v-if="!connected"
+      :disabled="usernameInvalid"
+    >Connect</v-btn>
     <v-btn class="mb-3" small color="red" @click="disconnectWs" v-if="connected">Disconnect</v-btn>
 
     <v-text-field
@@ -8,8 +15,11 @@
       label="Username"
       v-model="username"
       filled
+      dense
       shaped
       :counter="maxUserLength"
+      @input="validateUsernameLength"
+      color="primary"
     ></v-text-field>
 
     <v-card elevation="16" class="mx-auto">
@@ -18,7 +28,19 @@
           <template
             v-for="message in connected ? getMessages : [{id: 0, data: 'You need to connect before checking messages'}]"
           >
-            <v-subheader :key="message.id">user: {{ message.username }} - {{ message.data }}</v-subheader>
+            <!-- current user -->
+            <v-list-item
+              class="justify-end"
+              v-if="connected && message.username == username"
+              :key="message.id"
+            >{{ message.username }} - {{ message.data }}</v-list-item>
+            <!-- other users -->
+            <v-list-item
+              v-else-if="connected && message.username != username"
+              :key="message.id"
+            >{{ message.username }} - {{ message.data }}</v-list-item>
+            <!-- if not connected -->
+            <v-list-item v-else :key="message.id">{{ message.data }}</v-list-item>
           </template>
         </v-list>
       </v-card-text>
@@ -54,7 +76,8 @@ export default {
     messageRules: {
       max: v => v.length <= 40 || "Max 40 characters"
     },
-    username: ""
+    username: "",
+    usernameInvalid: true
   }),
   mounted() {
     this.$options.sockets.onmessage = data => {
@@ -85,6 +108,16 @@ export default {
         var payload = { message: this.messageInput, username: this.username };
         this.$store.dispatch("sendMessage", payload);
         this.messageInput = "";
+      }
+    },
+    validateUsernameLength() {
+      if (
+        this.username.length > 0 &&
+        this.username.length <= this.maxUserLength
+      ) {
+        this.usernameInvalid = false;
+      } else {
+        this.usernameInvalid = true;
       }
     }
   },
