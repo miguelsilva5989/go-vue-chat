@@ -32,19 +32,19 @@
             <ChatMessage
               v-if="connected && message.username == username"
               :key="message.id"
-              color="green"
+              color="#3366ff"
               :message="message"
               :messageIndex="index"
-              justify="justify-end py-2"
+              :justify="getMarginTopBot('justify-end', message, index)"
             />
             <!-- other users -->
             <ChatMessage
               v-if="connected && message.username != username"
               :key="message.id"
-              color="grey"
+              color="grey darken-3"
               :message="message"
               :messageIndex="index"
-              justify="justify-start py-2"
+              :justify="getMarginTopBot('justify-start', message, index)"
             />
 
             <!-- if not connected -->
@@ -128,6 +128,18 @@ export default {
         this.usernameInvalid = false;
       } else {
         this.usernameInvalid = true;
+      }
+    },
+    getMarginTopBot(justify, message, messageIndex) {
+      // if previous username is different than current username create top margin
+      if (
+        (this.getMessages[messageIndex - 1] &&
+          this.getMessages[messageIndex - 1].username != message.username) ||
+        !this.getMessages[messageIndex - 1]
+      ) {
+        return justify.concat(" mt-4");
+      } else {
+        return justify;
       }
     }
   },
