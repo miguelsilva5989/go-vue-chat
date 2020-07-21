@@ -139,7 +139,7 @@ export default {
       ) {
         return justify.concat(" mt-4");
       } else {
-        return justify;
+        return justify.concat(" mt-1");
       }
     }
   },

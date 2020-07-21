@@ -4,10 +4,10 @@
       <!-- only display if previous username is different than current username -->
       <v-card-subtitle
         v-if="(getMessages[messageIndex - 1] && getMessages[messageIndex - 1].username != message.username) || !getMessages[messageIndex - 1]"
-        class="pb-0"
+        class="font-italic"
       >{{ message.username }}</v-card-subtitle>
 
-      <v-card-text class="text--primary">{{ message.data }}</v-card-text>
+      <v-card-text class="text--primary text-right">{{ message.data }}</v-card-text>
     </v-card>
   </v-list-item>
 </template>
