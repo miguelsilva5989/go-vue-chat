@@ -26,21 +26,29 @@
       <v-card-text>
         <v-list :id="'messages' + chatId">
           <template
-            v-for="message in connected ? getMessages : [{id: 0, data: 'You need to connect before checking messages'}]"
+            v-for="(message, index) in connected ? getMessages : [{id: 0, data: 'You need to connect before checking messages', username: ''}]"
           >
             <!-- current user -->
-            <v-list-item
-              class="justify-end"
+            <ChatMessage
               v-if="connected && message.username == username"
               :key="message.id"
-            >{{ message.username }} - {{ message.data }}</v-list-item>
+              color="green"
+              :message="message"
+              :messageIndex="index"
+              justify="justify-end py-2"
+            />
             <!-- other users -->
-            <v-list-item
-              v-else-if="connected && message.username != username"
+            <ChatMessage
+              v-if="connected && message.username != username"
               :key="message.id"
-            >{{ message.username }} - {{ message.data }}</v-list-item>
+              color="grey"
+              :message="message"
+              :messageIndex="index"
+              justify="justify-start py-2"
+            />
+
             <!-- if not connected -->
-            <v-list-item v-else :key="message.id">{{ message.data }}</v-list-item>
+            <v-list-item v-else-if="!connected" :key="message.id">{{ message.data }}</v-list-item>
           </template>
         </v-list>
       </v-card-text>
@@ -61,12 +69,14 @@
 <script>
 import ws from "../api";
 import { mapGetters } from "vuex";
+import ChatMessage from "@/components/ChatMessage.vue";
 
 export default {
   name: "ChatArea",
   props: {
     chatId: Number
   },
+  components: { ChatMessage },
   data: () => ({
     benched: 1, // The number of items outside the user view that are rendered (even if they are not viewable); to help prevent empty white space when scrolling fast
     connected: false,
