@@ -47,4 +47,4 @@ go run main.go
 
 ## Websocket
 
-On Go I am using [Gorilla Websocket](github.com/gorilla/websocket) and on Vuejs I am using [Vue Native Websocket](https://www.npmjs.com/package/vue-native-websocket) alongside [Vuex](https://vuex.vuejs.org/) (for the store).
+On Go I am using [Gorilla Websocket](https://github.com/gorilla/websocket) and on Vuejs I am using [Vue Native Websocket](https://www.npmjs.com/package/vue-native-websocket) alongside [Vuex](https://vuex.vuejs.org/) (for the store).
