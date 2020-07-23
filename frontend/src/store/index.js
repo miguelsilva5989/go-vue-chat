@@ -10,6 +10,7 @@ export default new Vuex.Store({
       messages: [],
       reconnectError: false,
       messageId: 0,
+      message: {},
     },
   },
   getters: {
@@ -30,7 +31,31 @@ export default new Vuex.Store({
     },
     // default handler called for all methods
     SOCKET_ONMESSAGE(state, message) {
-      state.socket.message = message;
+      var msg = {};
+
+      try {
+        msg = JSON.parse(JSON.parse(message.data).body);
+      } catch (e) {
+        msg.username = '';
+        msg.message = '';
+        msg.messageId = -1;
+      }
+
+      if (
+        msg.username.length &&
+        msg.messageId != -1 &&
+        // if messageId not yet in array of messages
+        state.socket.messages.findIndex(
+          (val) => val.data === msg.message && val.username === msg.username
+        ) === -1
+      ) {
+        state.socket.messageId++;
+        state.socket.messages.push({
+          id: state.socket.messageId,
+          data: msg.message,
+          username: msg.username,
+        });
+      }
     },
     // mutations for reconnect methods
     SOCKET_RECONNECT(state, count) {
@@ -39,20 +64,26 @@ export default new Vuex.Store({
     SOCKET_RECONNECT_ERROR(state) {
       state.socket.reconnectError = true;
     },
-    ADD_MESSAGE(state, payload) {
-      // console.log(payload);
-      // console.log(state.socket.messages);
-      state.socket.messageId++;
-      state.socket.messages.push({
-        id: state.socket.messageId,
-        data: payload.message,
-        username: payload.username,
-      });
+
+    ADD_MESSAGE() {
+      // if (state.socket.message.username.length) {
+      //   state.socket.messageId++;
+      //   state.socket.messages.push({
+      //     id: state.socket.messageId,
+      //     data: state.socket.message.message,
+      //     username: state.socket.message.username,
+      //   });
+      // }
+      // state.socket.messageId++;
+      // state.socket.messages.push({
+      //   id: state.socket.messageId,
+      //   data: payload.message,
+      //   username: payload.username,
+      // });
     },
   },
   actions: {
     sendMessage({ commit }, payload) {
-      Vue.prototype.$socket.send(payload);
       commit('ADD_MESSAGE', payload);
     },
   },

@@ -74,7 +74,7 @@ import ChatMessage from "@/components/ChatMessage.vue";
 export default {
   name: "ChatArea",
   props: {
-    chatId: Number
+    chatId: Number,
   },
   components: { ChatMessage },
   data: () => ({
@@ -84,13 +84,13 @@ export default {
     maxUserLength: 20,
     messageInput: "",
     messageRules: {
-      max: v => v.length <= 40 || "Max 40 characters"
+      max: (v) => v.length <= 40 || "Max 40 characters",
     },
     username: "",
-    usernameInvalid: true
+    usernameInvalid: true,
   }),
   mounted() {
-    this.$options.sockets.onmessage = data => {
+    this.$options.sockets.onmessage = (data) => {
       console.log(data);
       var messageDivId = "messages" + this.chatId;
       var messagesDiv = document.getElementById(messageDivId);
@@ -99,13 +99,13 @@ export default {
   },
   methods: {
     connectWs() {
-      ws.connect(msg => {
+      ws.connect((msg) => {
         console.log(msg);
       });
       this.connected = !this.connected;
     },
     disconnectWs() {
-      ws.disconnect(msg => {
+      ws.disconnect((msg) => {
         console.log(msg);
       });
       this.connected = !this.connected;
@@ -115,8 +115,13 @@ export default {
         this.messageInput.length <= this.maxLength &&
         this.messageInput.length > 0
       ) {
-        var payload = { message: this.messageInput, username: this.username };
-        this.$store.dispatch("sendMessage", payload);
+        var payload = {
+          messageId: this.$store.state.socket.messageId,
+          message: this.messageInput,
+          username: this.username,
+        };
+        console.log("payload - ", payload);
+        this.$socket.send(JSON.stringify(payload));
         this.messageInput = "";
       }
     },
@@ -141,11 +146,11 @@ export default {
       } else {
         return justify.concat(" mt-1");
       }
-    }
+    },
   },
   computed: {
-    ...mapGetters(["getMessages"])
-  }
+    ...mapGetters(["getMessages"]),
+  },
 };
 </script>
 

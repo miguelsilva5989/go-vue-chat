@@ -21,11 +21,11 @@ export default {
     color: String,
     message: Object,
     messageIndex: Number,
-    justify: String
+    justify: String,
   },
   data: () => ({}),
   computed: {
-    ...mapGetters(["getMessages"])
-  }
+    ...mapGetters(["getMessages"]),
+  },
 };
 </script>
